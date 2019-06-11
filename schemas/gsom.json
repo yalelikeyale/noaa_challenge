@@ -1,0 +1,29 @@
+{
+    "type": "object",
+    "properties": {
+        "results": {
+            "type": ["null", "array"],
+            "items":{
+                "type":["null","object"],
+                "properties":{
+                    "date":{
+                        "type":["null","string"],
+                        "format":"date-time"
+                    },
+                    "datatype":{
+                        "type":["null","string"]                     
+                    },
+                    "station":{
+                        "type":["null","string"]
+                    },
+                    "attributes":{
+                        "type":["null","string"]
+                    },
+                    "value":{
+                        "type":["null","number"]
+                    }
+                }
+            }
+        }
+    }
+}
