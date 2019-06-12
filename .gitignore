@@ -102,8 +102,7 @@ tags
 singer-check-tap-data
 state.json
 
-venv
-.singer-tap
+.noaa_challenge
 
 catalog.json
 target-config.json
