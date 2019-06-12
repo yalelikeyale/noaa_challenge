@@ -11,6 +11,18 @@ This tap:
   - [GSOM](https://www.ncdc.noaa.gov/cdo-web/webservices/v2#data)
 - Outputs the schema for the data?datasetid=GSOM dataset
 
+Set-Up:
+
+1. Clone this repo
+2. Make sure you have pyenv installed otherwise run
+```
+pip install pyenv
+```
+3. Install the package and the dependencies
+```
+pyenv install -e .
+```
+
 Usage:
 
 1. Request an API token [here](https://www.ncdc.noaa.gov/cdo-web/webservices/v2#gettingStarted)
@@ -21,7 +33,7 @@ Usage:
 2. Discover
 
 ```
-$noaa-tap --config config.json --discover >> catalog.json
+pyenv run noaa-challenge --config config.json --discover >> catalog.json
 ```
 - Run the above to discover and store the API Scheme 
   - You'll need to store the schema in order to run the tap
@@ -44,5 +56,7 @@ $noaa-tap --config config.json --discover >> catalog.json
 4.Run the tap
 
 ```
-$noaa-tap --config config.json --catalog catalog.json
+pyenv run noaa-challenge --config config.json --catalog catalog.json
 ```
+
+5. Profit???
