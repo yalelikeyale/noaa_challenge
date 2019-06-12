@@ -1,6 +1,7 @@
 {
-  "url":"root_url_of_woocom_website",
-  "consumer_key":"ck_woocommerce",
-  "consumer_secret":"cs_woocommerce",
-  "start_date":"ISO8601-Date-String"
+  "url":"https://www.ncdc.noaa.gov/cdo-web/api/v2/data?",
+  "api_key":"{api_key}",
+  "datasetid":"gsom",
+  "start_date":"ISO8601-Date-String",
+  "end_date":"ISO8601-Date-String"
 }
