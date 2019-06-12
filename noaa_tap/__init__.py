@@ -77,7 +77,7 @@ def gen_request(stream_id, url):
 
 def sync_gsom(STATE, catalog):
     schema = load_schema("gsom")
-    singer.write_schema("gsom", schema, ["order_id"])
+    singer.write_schema("gsom", schema, ["date","datatype","station","attributes","value"])
 
     start = get_start(STATE, "gsom", "last_update")
     LOGGER.info("Only syncing gsom updated since " + str(start))
