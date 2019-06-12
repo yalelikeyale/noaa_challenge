@@ -9,7 +9,7 @@ This tap:
 - Pulls raw data from [NOAA API](https://www.ncdc.noaa.gov/cdo-web/webservices/v2#gettingStarted)
 - Extracts the following resources:
   - [GSOM](https://www.ncdc.noaa.gov/cdo-web/webservices/v2#data)
-- Outputs the schema for the data?datasetid=GSOM dataset
+- Outputs the data in json files with a 10,000 result limit
 
 Set-Up:
 
