@@ -23,6 +23,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+noaa_challenge.egg-info
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -93,9 +94,9 @@ ENV/
 .DS_Store
 
 # Custom stuff
-env.sh
+Pipfile
+Pipfile.lock
 config.json
-.autoenv.zsh
 
 rsa-key
 tags

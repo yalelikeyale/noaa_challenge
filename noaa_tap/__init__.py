@@ -25,7 +25,7 @@ from singer import utils
 REQUIRED_CONFIG_KEYS = ["url","datasetid", "api_key", "start_date", "end_date"]
 CONFIG = json.loads(open('config.json').read())
 ENDPOINTS = {
-    "gsom":"datasetid=GSOM&startdate={0}&enddate={1}"
+    "gsom":"datasetid=GSOM&startdate={0}&enddate={1}&offset={2}&limit=999"
 }
 LOGGER = singer.get_logger()
 
@@ -35,15 +35,16 @@ def get_endpoint(endpoint, kwargs):
         raise ValueError("Invalid endpoint {}".format(endpoint))
     
     datasetid = urllib.parse.quote(kwargs[0])
-    startdate = kwargs[1]
-    enddate = kwargs[2]
-    return CONFIG["url"]+ENDPOINTS[endpoint].format(datasetid,startdate,enddate)
+    startdate = kwargs[0]
+    enddate = kwargs[1]
+    offset = kwargs[2]
+    return CONFIG["url"]+ENDPOINTS[endpoint].format(startdate,enddate,offset)
 
 
 def get_start(STATE, tap_stream_id, bookmark_key):
     current_bookmark = singer.get_bookmark(STATE, tap_stream_id, bookmark_key)
     if current_bookmark is None:
-        return CONFIG["start_date"]
+        return 0
     return current_bookmark
 
 
@@ -55,28 +56,19 @@ def load_schema(entity):
     return schema
 
 
-
-def filter_dates(result):
-    tzinfo = parser.parse(CONFIG["start_date"]).tzinfo
-    filtered = {
-        "date":parser.parse(result["date"]).replace(tzinfo=tzinfo).isoformat(),
-        "datatype":result["datatype"],
-        "station":result["station"],
-        "attributes":result["attributes"],
-        "value": result["value"]
-    }
-    return filtered
-
-
 def giveup(exc):
-    return exc.response is not None         and 400 <= exc.response.status_code < 500         and exc.response.status_code != 429
+    return exc.response is not None and 400 <= exc.response.status_code < 500 and exc.response.status_code != 429
 
 
-@utils.backoff((backoff.expo,requests.exceptions.RequestException), giveup)
+@backoff.on_exception(backoff.expo,
+                      requests.exceptions.RequestException,
+                      max_tries=5,
+                      on_giveup=giveup)
+
 @utils.ratelimit(20, 1)
 def gen_request(stream_id, url):
     with metrics.http_request_timer(stream_id) as timer:
-        resp = requests.get(url, headers={"token":CONFIG[api_key]})
+        resp = requests.get(url, headers={"token":CONFIG["api_key"]})
         timer.tags[metrics.Tag.http_status_code] = resp.status_code
         resp.raise_for_status()
         return resp.json()
@@ -88,27 +80,24 @@ def sync_gsom(STATE, catalog):
     singer.write_schema("gsom", schema, ["order_id"])
 
     start = get_start(STATE, "gsom", "last_update")
-    LOGGER.info("Only syncing gsom updated since " + start)
-    last_update = start
-    page_number = 1
+    LOGGER.info("Only syncing gsom updated since " + str(start))
+    records_processed = start
+    offset = 0
     with metrics.record_counter("gsom") as counter:
         while True:
-            endpoint = get_endpoint("gsom", [start])
+            endpoint = get_endpoint("gsom", [CONFIG["start_date"],CONFIG["end_date"],offset])
             LOGGER.info("GET %s", endpoint)
             response = gen_request("gsom",endpoint)
-            for result in response.results:
+            for result in response["results"]:
                 counter.increment()
-#                 result = filter_dates(result)
-#                 if("date" in result) and (parser.parse(result["date"]) > parser.parse(last_update)):
-#                     last_update = result["date"]
                 singer.write_record("gsom", result)
-            if len(orders) < 100:
+            if len(response["results"])<999:
                 break
             else:
-                page_number +=1
-    STATE = singer.write_bookmark(STATE, 'gsom', 'last_update', last_update) 
+                offset +=1000
+    STATE = singer.write_bookmark(STATE, 'gsom', 'last_update', counter.value) 
     singer.write_state(STATE)
-    LOGGER.info("Completed Orders Sync")
+    LOGGER.info("Completed NOAA GSOM Sync")
     return STATE
 
 
