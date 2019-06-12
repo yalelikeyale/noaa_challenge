@@ -14,7 +14,7 @@ This tap:
 Set-Up:
 
 1. Clone this repo
-2. Make sure you have pyenv installed otherwise run
+2. Make sure you have pipenv installed otherwise run
 ```
 pip install pipenv
 ```
@@ -22,23 +22,27 @@ pip install pipenv
 ```
 pipenv install -e .
 ```
+4. Request an API token [here](https://www.ncdc.noaa.gov/cdo-web/webservices/v2#gettingStarted)
+5. Create a config.json file from sample-config.json
+  - Provide the API Key acquired from step 1
+  - Provide the start_date and end_date to determine the date range that you're interested in
+  - Save the file as config.json
+
 
 Usage:
-
-1. Request an API token [here](https://www.ncdc.noaa.gov/cdo-web/webservices/v2#gettingStarted)
-2. Create Config file from sample-config.json
-  - Replace the {API_Token} value with your API Token from step 1
-  - Replace the {Start Date} and {End Date} values with the desired date range you'd like to pull
+1. Activate your pipenv environmen
+```
+pipenv shell
+```
 
 2. Discover
-
+  - Run the following to view the available streams the tap supports
 ```
-pipenv run noaa-challenge --config config.json --discover >> catalog.json
+noaa-challenge --config config.json --discover >> catalog.json
 ```
-- Run the above to discover and store the API Scheme 
-  - You'll need to store the schema in order to run the tap
 
-3. Select Streams
+5. Select Streams
+  - Add ```"selected":true``` within the schema object to select the stream
 
 ```
     {
@@ -51,12 +55,12 @@ pipenv run noaa-challenge --config config.json --discover >> catalog.json
         "tap_stream_id": "orders"
     }
 ```
-- Add ```"selected":true``` within the schema object to select the stream
 
-4.Run the tap
+
+6.Run the tap
 
 ```
-pipenv run noaa-challenge --config config.json --catalog catalog.json
+noaa-challenge --config config.json --catalog catalog.json
 ```
 
-5. Profit???
+7. Profit???
