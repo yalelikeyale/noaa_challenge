@@ -1,20 +1,22 @@
 from setuptools import setup
 
 setup(
-    name="noaa-tap",
+    name="noaa_challenge",
     version="0.1.0",
-    description="Singer.io tap for extracting data",
-    author="Stitch",
-    url="http://singer.io",
+    description="Singer.io tap for extracting data from the NOAA Weather API",
+    author="yalelikeyale",
+    url="https://github.com/yalelikeyale/noaa_challenge",
     classifiers=["Programming Language :: Python :: 3 :: Only"],
     py_modules=["noaa_tap"],
     install_requires=[
-        "singer-python>=5.0.12",
-        "requests",
+        'attrs==16.3.0',
+        'singer-python==3.1.0',
+        'requests==2.20.0',
+        'backoff==1.3.2'
     ],
     entry_points="""
     [console_scripts]
-    woo-tap=woo_tap:main
+    noaa-challenge=noaa_tap:main
     """,
     packages=["noaa_tap"],
     package_data = {

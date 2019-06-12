@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-
 import itertools
 import os
 import sys
@@ -62,7 +61,7 @@ def filter_dates(result):
     filtered = {
         "date":parser.parse(result["date"]).replace(tzinfo=tzinfo).isoformat(),
         "datatype":result["datatype"],
-        "station":,result["station"],
+        "station":result["station"],
         "attributes":result["attributes"],
         "value": result["value"]
     }

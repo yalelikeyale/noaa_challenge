@@ -103,7 +103,7 @@ singer-check-tap-data
 state.json
 
 venv
-
+.singer-tap
 
 catalog.json
 target-config.json
