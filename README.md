@@ -30,7 +30,7 @@ pipenv install -e .
 
 
 Usage:
-1. Activate your pipenv environmen
+1. Activate your pipenv environment
 ```
 pipenv shell
 ```
