@@ -16,11 +16,11 @@ Set-Up:
 1. Clone this repo
 2. Make sure you have pyenv installed otherwise run
 ```
-pip install pyenv
+pip install pipenv
 ```
 3. Install the package and the dependencies
 ```
-pyenv install -e .
+pipenv install -e .
 ```
 
 Usage:
@@ -33,7 +33,7 @@ Usage:
 2. Discover
 
 ```
-pyenv run noaa-challenge --config config.json --discover >> catalog.json
+pipenv run noaa-challenge --config config.json --discover >> catalog.json
 ```
 - Run the above to discover and store the API Scheme 
   - You'll need to store the schema in order to run the tap
@@ -56,7 +56,7 @@ pyenv run noaa-challenge --config config.json --discover >> catalog.json
 4.Run the tap
 
 ```
-pyenv run noaa-challenge --config config.json --catalog catalog.json
+pipenv run noaa-challenge --config config.json --catalog catalog.json
 ```
 
 5. Profit???
