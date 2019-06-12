@@ -41,7 +41,7 @@ pipenv shell
 noaa-challenge --config config.json --discover >> catalog.json
 ```
 
-5. Select Streams
+3. Select Streams
   - Add ```"selected":true``` within the schema object to select the stream
 
 ```
@@ -57,10 +57,10 @@ noaa-challenge --config config.json --discover >> catalog.json
 ```
 
 
-6.Run the tap
+4.Run the tap
 
 ```
 noaa-challenge --config config.json --catalog catalog.json
 ```
 
-7. Profit???
+5. Profit???
