@@ -25,7 +25,7 @@ from singer import utils
 REQUIRED_CONFIG_KEYS = ["url","datasetid", "api_key", "start_date", "end_date"]
 CONFIG = json.loads(open('config.json').read())
 ENDPOINTS = {
-    "gsom":"datasetid=GSOM&startdate={0}&enddate={1}&offset={2}&limit=999"
+    "gsom":"datasetid=GSOM&startdate={0}&enddate={1}&offset={2}&limit=1000"
 }
 LOGGER = singer.get_logger()
 
@@ -37,8 +37,8 @@ def get_endpoint(endpoint, kwargs):
     datasetid = urllib.parse.quote(kwargs[0])
     startdate = kwargs[0]
     enddate = kwargs[1]
-    offset = kwargs[2]
-    return CONFIG["url"]+ENDPOINTS[endpoint].format(startdate,enddate,offset)
+    offset = kwargs[2] + 1
+    return CONFIG["url"]+ENDPOINTS[endpoint].format(startdate,enddate,str(offset))
 
 
 def get_start(STATE, tap_stream_id, bookmark_key):
@@ -73,6 +73,12 @@ def gen_request(stream_id, url):
         resp.raise_for_status()
         return resp.json()
 
+def write_to_file(results_list, kwargs):
+    start = kwargs[0]
+    end = kwargs[1]
+    file_name = 'results_{0}_to_{1}.json'.format(start,end)
+    with open(file_name, 'w') as outfile:  
+        json.dump(results_list, outfile)
 
 
 def sync_gsom(STATE, catalog):
@@ -83,6 +89,12 @@ def sync_gsom(STATE, catalog):
     LOGGER.info("Only syncing gsom updated since " + str(start))
     records_processed = start
     offset = 0
+    result_count = 0
+    chunk_start = 0
+    chunk_end = 10000
+    results_list = {
+        "results":[]
+    }
     with metrics.record_counter("gsom") as counter:
         while True:
             endpoint = get_endpoint("gsom", [CONFIG["start_date"],CONFIG["end_date"],offset])
@@ -90,8 +102,19 @@ def sync_gsom(STATE, catalog):
             response = gen_request("gsom",endpoint)
             for result in response["results"]:
                 counter.increment()
+                result_count+=1
                 singer.write_record("gsom", result)
-            if len(response["results"])<999:
+                if result_count > 10000:
+                    write_to_file(results_list, [chunk_start,chunk_end])
+                    chunk_start += 10000
+                    chunk_end += 10000
+                    results_list = {
+                        "results":[result]
+                        }
+                    result_count = 0
+                else:
+                    results_list["results"].append(result)
+            if len(response["results"])<1000:
                 break
             else:
                 offset +=1000
