@@ -111,7 +111,7 @@ def sync_gsom(STATE, catalog):
                     results_list = {
                         "results":[result]
                         }
-                    result_count = 0
+                    result_count = 1
                 else:
                     results_list["results"].append(result)
             if len(response["results"])<1000:
