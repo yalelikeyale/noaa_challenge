@@ -11,7 +11,7 @@ setup(
     install_requires=[
         'attrs==16.3.0',
         'singer-python==5.0.15',
-        'requests==2.20.0'
+        'requests==2.31.0'
     ],
     entry_points="""
     [console_scripts]
